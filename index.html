@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Valley School</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c5aa0, #1e3d72);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .school-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        /* TOP CORNER BUTTON - NO GAP */
+        .menu-btn {
+            position: fixed;
+            top: 20px;  /* Header ke bilkul niche */
+            left: 20px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255,107,53,0.4);
+            transition: all 0.3s;
+        }
+        .menu-btn:hover {
+            background: #e55a2b;
+            transform: scale(1.05);
+        }
+        /* SIDEBAR - JUST BELOW BUTTON */
+        .sidebar {
+            position: fixed;
+            top: 65px;  /* Button ke bilkul niche (20px + 45px height) */
+            left: -320px;
+            width: 300px;
+            background: white;
+            padding: 25px;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+            border-radius: 0 20px 20px 20px;
+            z-index: 1000;
+            transition: left 0.4s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .sidebar.active {
+            left: 20px;  /* Button ke same position */
+        }
+        .sidebar h3 {
+            color: #2c5aa0;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar li {
+            margin-bottom: 15px;
+        }
+        .sidebar a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 18px 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            transition: all 0.3s;
+            border-left: 5px solid transparent;
+            font-weight: 500;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: linear-gradient(135deg, #2c5aa0, #1e3d72);
+            color: white;
+            border-left-color: #ff6b35;
+            transform: translateX(8px);
+            box-shadow: 0 5px 20px rgba(44,90,160,0.3);
+        }
+        .main-content {
+            padding: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding-top: 80px;  /* Menu button space */
+        }
+        .section {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* HOME PAGE - SAB KUCH Dikhaye */
+        #home .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s;
+            border-top: 6px solid #ff6b35;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b35, #2c5aa0);
+        }
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+        .card h3 {
+            color: #2c5aa0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        /* GALLERY - Full Width */
+        .gallery-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .gallery-card h3 {
+            color: white;
+        }
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            border-radius: 15px;
+            height: 280px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+        }
+        .marquee {
+            display: inline-block;
+            animation: scroll-left 35s linear infinite;
+        }
+        .marquee img {
+            height: 260px;
+            width: 420px;
+            object-fit: cover;
+            margin-right: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: linear-gradient(135deg, #2c5aa0, #1e3d72);
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        /* FACILITY TAGS */
+        .facility-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .facility-item {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .menu-btn {
+                top: 15px;
+                left: 15px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            .sidebar {
+                top: 60px;
+                left: -100%;
+                width: 95vw;
+            }
+            .sidebar.active {
+                left: 15px;
+            }
+            .marquee img {
+                height: 180px;
+                width: 300px;
+            }
+            .home-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1 class="school-name">🌟 GREEN VALLEY SCHOOL</h1>
+    </header>
+
+    <!-- TOP CORNER MENU BUTTON -->
+    <button class="menu-btn" onclick="toggleSidebar()">📋 MENU</button>
+
+    <!-- DROPDOWN SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <h3>🏫 School Menu</h3>
+        <ul>
+            <li><a href="#" onclick="showSection('home')" class="active">🏠 Home</a></li>
+            <li><a href="#" onclick="showSection('teachers')">👨‍🏫 Teachers</a></li>
+            <li><a href="#" onclick="showSection('faculty')">👩‍🏫 Faculty</a></li>
+            <li><a href="#" onclick="showSection('hostel')">🏠 Hostel</a></li>
+            <li><a href="#" onclick="showSection('transport')">🚌 Transport</a></li>
+            <li><a href="#" onclick="showSection('facilities')">🏛️ Facilities</a></li>
+            <li><a href="#" onclick="showSection('fee')">💰 Fee Structure</a></li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HOME - SAB KUCH EK SAATH -->
+        <section id="home" class="section active">
+            <div class="home-grid">
+                <!-- 1. GALLERY -->
+                <div class="card gallery-card">
+                    <h3>📸 School Gallery</h3>
+                    <div class="gallery">
+                        <div class="marquee-container">
+                            <div class="marquee">
+                                <img src="school1.jpg" alt="School Building">
+                                <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=420&h=260&fit=crop" alt="Classroom">
+                                <img src="https://images.unsplash.com/photo-1524178232363-64cc1b8f9835?w=420&h=260&fit=crop" alt="Library">
+                                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=420&h=260&fit=crop" alt="Playground">
+                                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=420&h=260&fit=crop" alt="School">
+                                <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=420&h=260&fit=crop" alt="Classroom">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TEACHERS -->
+                <div class="card">
+                    <h3>👨‍🏫 Top Teachers</h3>
+                    <div class="facility-list">
+                        <div class="facility-item">Rajesh Kumar (Maths HOD)</div>
+                        <div class="facility-item">Priya Sharma (English)</div>
+                        <div class="facility-item">Dr. Anil Verma (Physics)</div>
+                        <div class="facility-item">50+ Qualified Staff</div>
+                    </div>
+                </div>
+
+                <!-- 3. FACILITIES -->
+                <div class="card">
+                    <h3>🏛️ Key Facilities</h3>
+                    <div class="facility-list">
+                        <div class="facility-item">AC Classrooms</div>
+                        <div class="facility-item">Science Labs</div>
+                        <div class="facility-item">Sports Complex</div>
+                        <div class="facility-item">Digital Library</div>
+                        <div class="facility-item">WiFi Campus</div>
+                    </div>
+                </div>
+
+                <!-- 4. FEE STRUCTURE -->
+                <div class="card">
+                    <h3>💰 Quick Fees</h3>
+                    <table>
+                        <tr><th>Class</th><th>Annual</th></tr>
+                        <tr><td>Nursery-KG</td><td>₹85K</td></tr>
+                        <tr><td>Class 1-5</td><td>₹95K</td></tr>
+                        <tr><td>Class 6-10</td><td>₹1.1L</td></tr>
+                        <tr><td>Class 11-12</td><td>₹1.35L</td></tr>
+                    </table>
+                </div>
+
+                <!-- 5. HOSTEL -->
+                <div class="card">
+                    <h3>🏠 Hostel</h3>
+                    <p><strong>Capacity:</strong> 500 students<br>
+                    <strong>Fee:</strong> ₹1.2 Lakh/year<br>
+                    <strong>Facilities:</strong> AC Rooms, Mess, Gym, Laundry</p>
+                </div>
+
+                <!-- 6. TRANSPORT -->
+                <div class="card">
+                    <h3>🚌 Transport</h3>
+                    <p><strong>25 AC Buses</strong><br>
+                    <strong>GPS Tracking</strong><br>
+                    <strong>Fee:</strong> ₹25K/year<br>
+                    Patna Wide Coverage</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- OTHER SECTIONS (Detailed) -->
+        <section id="teachers" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>👨‍🏫 Complete Faculty List</h3>
+                    <p>50+ teachers, 100% post-graduate, NET/CTET qualified with 15+ years average experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faculty" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>📊 Faculty Stats</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>✅ 100% Post Graduate</li>
+                        <li>✅ 40% PhD Holders</li>
+                        <li>✅ Regular Training</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="hostel" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>🏠 Hostel Features</h3>
+                    <div class="facility-list">
+                        <div class="facility-item">AC/Non-AC Rooms</div>
+                        <div class="facility-item">24/7 Security</div>
+                        <div class="facility-item">Vegetarian Mess</div>
+                        <div class="facility-item">WiFi & Gym</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="transport" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>🚌 Transport Details</h3>
+                    <p>25 AC buses, GPS tracking, trained drivers & escorts, 40+ routes across Patna.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="facilities" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>🔬 Science Laboratories</h3>
+                    <p>Advanced Physics, Chemistry, Biology & Computer labs with latest equipment.</p>
+                </div>
+                <div class="card">
+                    <h3>⚽ Sports Complex</h3>
+                    <p>Cricket, Football, Basketball, Tennis, Badminton, Indoor hall.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="fee" class="section">
+            <div class="home-grid">
+                <div class="card">
+                    <h3>💰 Complete Fee 2026-27</h3>
+                    <table>
+                        <tr><th>Class</th><th>Tuition</th><th>Hostel</th><th>Transport</th></tr>
+                        <tr><td>Nursery-KG</td><td>₹85,000</td><td>₹1.2L</td><td>₹25K</td></tr>
+                        <tr><td>1-5</td><td>₹95,000</td><td>₹1.2L</td><td>₹25K</td></tr>
+                        <tr><td>6-10</td><td>₹1.1L</td><td>₹1.2L</td><td>₹25K</td></tr>
+                        <tr><td>11-12</td><td>₹1.35L</td><td>₹1.2L</td><td>₹25K</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        // Gallery pause on hover
+        document.addEventListener('DOMContentLoaded', () => {
+            const marquee = document.querySelector('.marquee');
+            marquee.addEventListener('mouseenter', () => {
+                marquee.style.animationPlayState = 'paused';
+            });
+            marquee.addEventListener('mouseleave', () => {
+                marquee.style.animationPlayState = 'running';
+            });
+        });
+
+        // Close sidebar on outside click
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const btn = document.querySelector('.menu-btn');
+            if (!e.target.closest('.sidebar') && !e.target.closest('.menu-btn')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+  </html>
