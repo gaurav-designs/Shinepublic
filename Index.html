@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GAIN // Weight Gain Dashboard</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+    --bg:#08090b;
+    --card:#111318;
+    --card2:#15171d;
+    --border:#24272e;
+    --text:#f4f4f5;
+    --muted:#858994;
+    --accent:#b8ff3d;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 80% 0%,rgba(184,255,61,.08),transparent 28%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+.app{
+    width:min(1180px,94%);
+    margin:auto;
+    padding:28px 0 50px;
+}
+
+button,input,textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* HEADER */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.logo span{
+    color:var(--accent);
+}
+
+.date{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* HERO */
+
+.hero{
+    background:linear-gradient(135deg,#15181d,#0f1014);
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:32px;
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:30px;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:18px;
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    background:var(--accent);
+    filter:blur(150px);
+    opacity:.07;
+    right:-100px;
+    top:-100px;
+}
+
+.hero-content{
+    position:relative;
+    z-index:1;
+}
+
+.eyebrow{
+    color:var(--accent);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:2px;
+    margin-bottom:12px;
+}
+
+.hero h1{
+    font-size:clamp(30px,5vw,52px);
+    line-height:1;
+    letter-spacing:-2px;
+    margin-bottom:14px;
+}
+
+.hero p{
+    color:var(--muted);
+    line-height:1.6;
+    max-width:520px;
+}
+
+.quote{
+    margin-top:22px;
+    color:#ccc;
+    font-size:13px;
+}
+
+/* PROGRESS RING */
+
+.ring-wrap{
+    display:flex;
+    justify-content:center;
+    position:relative;
+    z-index:2;
+}
+
+.ring{
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    background:conic-gradient(var(--accent) 0deg,#292d34 0deg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    box-shadow:0 0 50px rgba(184,255,61,.08);
+    transition:.5s;
+}
+
+.ring:before{
+    content:"";
+    position:absolute;
+    width:158px;
+    height:158px;
+    border-radius:50%;
+    background:#101216;
+}
+
+.ring-content{
+    position:relative;
+    text-align:center;
+}
+
+.percent{
+    font-size:39px;
+    font-weight:800;
+}
+
+.ring-label{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.card{
+    background:rgba(17,19,24,.9);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:22px;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.card-title h2{
+    font-size:15px;
+}
+
+.card-title span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+/* DAILY COMPLETION */
+
+.stat-number{
+    font-size:31px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.stat-bar{
+    height:6px;
+    background:#292c32;
+    border-radius:20px;
+    margin-top:17px;
+    overflow:hidden;
+}
+
+.stat-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    border-radius:20px;
+    transition:.5s;
+}
+
+/* HABITS */
+
+.habits{
+    grid-column:span 2;
+}
+
+.habit{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px;
+    border:1px solid #20232a;
+    background:#0e1014;
+    border-radius:14px;
+    margin-bottom:9px;
+    transition:.2s;
+}
+
+.habit:hover{
+    border-color:#383d46;
+    transform:translateY(-1px);
+}
+
+.habit-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.icon{
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
+    background:#191c22;
+    font-size:18px;
+}
+
+.habit-name{
+    font-size:13px;
+    font-weight:600;
+}
+
+.habit-sub{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.check{
+    appearance:none;
+    width:25px;
+    height:25px;
+    border:1px solid #444851;
+    border-radius:8px;
+    cursor:pointer;
+    position:relative;
+    transition:.2s;
+}
+
+.check:checked{
+    background:var(--accent);
+    border-color:var(--accent);
+}
+
+.check:checked:after{
+    content:"✓";
+    position:absolute;
+    color:#0b0c0d;
+    font-weight:900;
+    left:6px;
+    top:2px;
+}
+
+/* WEIGHT */
+
+.weight-main{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+}
+
+.weight{
+    font-size:38px;
+    font-weight:800;
+}
+
+.unit{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.target{
+    color:var(--muted);
+    font-size:11px;
+    text-align:right;
+}
+
+.target strong{
+    color:white;
+    display:block;
+    font-size:14px;
+}
+
+.weight-progress{
+    height:8px;
+    background:#292c32;
+    border-radius:20px;
+    margin-top:20px;
+    overflow:hidden;
+}
+
+.weight-progress div{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--accent),#e2ffad);
+    transition:.5s;
+}
+
+.weight-form{
+    display:flex;
+    gap:8px;
+    margin-top:17px;
+}
+
+.weight-form input{
+    width:100%;
+    background:#0b0d10;
+    color:white;
+    border:1px solid #30333a;
+    border-radius:10px;
+    padding:10px;
+    outline:none;
+}
+
+.btn{
+    background:var(--accent);
+    border:0;
+    border-radius:10px;
+    padding:10px 14px;
+    font-weight:800;
+    color:#0a0b0c;
+}
+
+/* STREAK */
+
+.streak{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.fire{
+    font-size:42px;
+}
+
+.streak-number{
+    font-size:34px;
+    font-weight:800;
+}
+
+.streak-text{
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* HYDRATION */
+
+.water-card{
+    grid-column:span 1;
+}
+
+.water-count{
+    font-size:28px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.water-sub{
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:18px;
+}
+
+.water-grid{
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:6px;
+}
+
+.glass{
+    height:42px;
+    border-radius:8px;
+    background:#20232a;
+    border:1px solid #2b2f36;
+    cursor:pointer;
+    transition:.25s;
+    position:relative;
+}
+
+.glass:hover{
+    transform:translateY(-2px);
+    border-color:#454a53;
+}
+
+.glass.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    box-shadow:0 0 12px rgba(184,255,61,.15);
+}
+
+.glass.active:after{
+    content:"✓";
+    position:absolute;
+    color:#0b0c0d;
+    font-weight:900;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+}
+
+.water-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.small-btn{
+    background:#20232a;
+    border:1px solid #30343c;
+    color:#ddd;
+    border-radius:9px;
+    padding:8px 12px;
+    font-size:11px;
+}
+
+.small-btn:hover{
+    border-color:#555;
+}
+
+/* NOTES */
+
+.notes{
+    grid-column:span 2;
+}
+
+textarea{
+    width:100%;
+    min-height:105px;
+    resize:none;
+    background:#0c0e11;
+    border:1px solid #292c32;
+    border-radius:13px;
+    color:white;
+    padding:14px;
+    outline:none;
+    line-height:1.5;
+}
+
+textarea:focus,
+input:focus{
+    border-color:#59614a;
+}
+
+/* HISTORY */
+
+.history{
+    grid-column:span 3;
+}
+
+.history-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 0;
+    border-bottom:1px solid #20232a;
+}
+
+.history-row:last-child{
+    border:0;
+}
+
+.history-date{
+    font-size:12px;
+}
+
+.history-score{
+    color:var(--accent);
+    font-size:12px;
+    font-weight:700;
+}
+
+/* FOOTER */
+
+footer{
+    text-align:center;
+    color:#4f535c;
+    font-size:10px;
+    margin-top:30px;
+    letter-spacing:1px;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    .hero{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .hero p{
+        margin:auto;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .habits,
+    .notes,
+    .history{
+        grid-column:span 1;
+    }
+
+    .ring{
+        width:165px;
+        height:165px;
+    }
+
+    .ring:before{
+        width:137px;
+        height:137px;
+    }
+}
+
+@media(max-width:500px){
+
+    .app{
+        width:92%;
+        padding-top:18px;
+    }
+
+    .hero{
+        padding:25px 19px;
+        border-radius:22px;
+    }
+
+    .card{
+        padding:18px;
+        border-radius:18px;
+    }
+
+    .topbar{
+        margin-bottom:20px;
+    }
+
+    .date{
+        font-size:10px;
+    }
+
+    .glass{
+        height:36px;
+    }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+<!-- HEADER -->
+
+<div class="topbar">
+
+    <div class="logo">
+        GAIN<span>//</span>
+    </div>
+
+    <div class="date" id="date"></div>
+
+</div>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            PERSONAL WEIGHT GAIN SYSTEM
+        </div>
+
+        <h1>
+            BUILD YOUR<br>
+            BETTER SELF.
+        </h1>
+
+        <p>
+            Track your food, workout, hydration and
+            daily habits. Small actions every day.
+            Bigger results over time.
+        </p>
+
+        <div class="quote">
+            “Consistency beats motivation.”
+        </div>
+
+    </div>
+
+
+    <div class="ring-wrap">
+
+        <div class="ring" id="ring">
+
+            <div class="ring-content">
+
+                <div class="percent" id="percent">
+                    0%
+                </div>
+
+                <div class="ring-label">
+                    TODAY'S SCORE
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- MAIN GRID -->
+
+<div class="grid">
+
+
+<!-- DAILY COMPLETION -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Daily Completion
+        </h2>
+
+        <span id="completedText">
+            0 / 9
+        </span>
+
+    </div>
+
+    <div class="stat-number" id="score">
+        0%
+    </div>
+
+    <div class="stat-label">
+        Keep going. Every check counts.
+    </div>
+
+    <div class="stat-bar">
+        <div class="stat-fill" id="scoreBar"></div>
+    </div>
+
+</div>
+
+
+<!-- STREAK -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Consistency
+        </h2>
+
+        <span>
+            STREAK
+        </span>
+
+    </div>
+
+    <div class="streak">
+
+        <div class="fire">
+            🔥
+        </div>
+
+        <div>
+
+            <div class="streak-number" id="streak">
+                0
+            </div>
+
+            <div class="streak-text">
+                DAYS IN A ROW
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- WEIGHT -->
+
+<div class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Weight Journey
+        </h2>
+
+        <span>
+            GOAL: 55 KG
+        </span>
+
+    </div>
+
+    <div class="weight-main">
+
+        <div>
+
+            <span class="weight" id="weight">
+                46
+            </span>
+
+            <span class="unit">
+                KG
+            </span>
+
+        </div>
+
+        <div class="target">
+
+            <span>
+                TARGET
+            </span>
+
+            <strong>
+                55 KG
+            </strong>
+
+        </div>
+
+    </div>
+
+    <div class="weight-progress">
+
+        <div id="weightBar"></div>
+
+    </div>
+
+    <div class="weight-form">
+
+        <input
+            type="number"
+            id="weightInput"
+            step="0.1"
+            placeholder="Today's weight"
+        >
+
+        <button
+            class="btn"
+            onclick="saveWeight()"
+        >
+            SAVE
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- HABITS -->
+
+<div class="card habits">
+
+    <div class="card-title">
+
+        <h2>
+            Today's Habits
+        </h2>
+
+        <span>
+            CHECKLIST
+        </span>
+
+    </div>
+
+
+    <div id="habitList">
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🥛
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Milk
+                    </div>
+
+                    <div class="habit-sub">
+                        Had your milk today?
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🍌
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Banana
+                    </div>
+
+                    <div class="habit-sub">
+                        Eat your calorie-rich fruit
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🍳
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Breakfast
+                    </div>
+
+                    <div class="habit-sub">
+                        Proper morning meal
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🍚
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Lunch
+                    </div>
+
+                    <div class="habit-sub">
+                        Complete proper lunch
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🥜
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Healthy Snack
+                    </div>
+
+                    <div class="habit-sub">
+                        Protein / calorie-rich snack
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🍛
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Dinner
+                    </div>
+
+                    <div class="habit-sub">
+                        Don't skip your final meal
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    🏋️
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Workout
+                    </div>
+
+                    <div class="habit-sub">
+                        Strength training completed
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    💧
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Hydration Goal
+                    </div>
+
+                    <div class="habit-sub">
+                        Complete your water target
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+        <div class="habit">
+
+            <div class="habit-left">
+
+                <div class="icon">
+                    😴
+                </div>
+
+                <div>
+
+                    <div class="habit-name">
+                        Sleep
+                    </div>
+
+                    <div class="habit-sub">
+                        Aim for 8+ hours
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input
+                class="check"
+                type="checkbox"
+            >
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- HYDRATION -->
+
+<div class="card water-card">
+
+    <div class="card-title">
+
+        <h2>
+            Hydration
+        </h2>
+
+        <span>
+            DAILY TARGET
+        </span>
+
+    </div>
+
+
+    <div class="water-count" id="waterText">
+        0 / 8
+    </div>
+
+    <div class="water-sub">
+        Tap a glass after drinking water.
+    </div>
+
+
+    <div
+        class="water-grid"
+        id="waterGrid"
+    ></div>
+
+
+    <div class="water-buttons">
+
+        <button
+            class="small-btn"
+            onclick="addWater()"
+        >
+            + Add glass
+        </button>
+
+        <button
+            class="small-btn"
+            onclick="resetWater()"
+        >
+            Reset
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- NOTES -->
+
+<div class="card notes">
+
+    <div class="card-title">
+
+        <h2>
+            Daily Journal
+        </h2>
+
+        <span>
+            AUTO-SAVE
+        </span>
+
+    </div>
+
+    <textarea
+        id="notes"
+        placeholder="What did you eat today? How was your workout? How are you feeling?"
+    ></textarea>
+
+</div>
+
+
+<!-- HISTORY -->
+
+<div class="card history">
+
+    <div class="card-title">
+
+        <h2>
+            Recent Activity
+        </h2>
+
+        <span>
+            LAST 7 DAYS
+        </span>
+
+    </div>
+
+    <div id="history"></div>
+
+</div>
+
+
+</div>
+
+
+<footer>
+    GAIN // PERSONAL PROGRESS SYSTEM
+</footer>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATE
+========================= */
+
+function getToday(){
+
+    const d = new Date();
+
+    return d.getFullYear() + "-" +
+        String(d.getMonth()+1).padStart(2,"0") + "-" +
+        String(d.getDate()).padStart(2,"0");
+
+}
+
+const today = getToday();
+
+
+document.getElementById("date").innerText =
+    new Date().toLocaleDateString(
+        "en-IN",
+        {
+            weekday:"long",
+            day:"numeric",
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+
+/* =========================
+   HABITS
+========================= */
+
+const checks =
+    document.querySelectorAll(".check");
+
+const goalKey =
+    "gain_goals_" + today;
+
+
+function loadGoals(){
+
+    const saved =
+        JSON.parse(
+            localStorage.getItem(goalKey)
+        ) || [];
+
+    checks.forEach((check,index)=>{
+
+        check.checked =
+            saved[index] || false;
+
+    });
+
+    updateProgress();
+
+}
+
+
+checks.forEach(check=>{
+
+    check.addEventListener(
+        "change",
+        function(){
+
+            const data =
+                [...checks].map(
+                    c => c.checked
+                );
+
+            localStorage.setItem(
+                goalKey,
+                JSON.stringify(data)
+            );
+
+            updateProgress();
+
+            saveDayHistory();
+
+        }
+    );
+
+});
+
+
+/* =========================
+   PROGRESS
+========================= */
+
+function updateProgress(){
+
+    const completed =
+        [...checks].f
